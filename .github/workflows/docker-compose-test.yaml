@@ -1,0 +1,26 @@
+on:
+  workflow_dispatch:
+    inputs:
+      runs-on:
+        description: 'The type of machine to run the job on'
+        required: true
+        default: warp-ubuntu-latest-x64-2x
+
+jobs:
+  test:
+    runs-on: ${{ github.event.inputs.runs-on }}
+    strategy:
+      matrix:
+        counter: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30]
+        times: [1, 2]
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      
+      - name: Install deps
+        run: |
+          sudo apt update -y
+          sudo apt install -y redis-tools
+      - name: Run docker compose script for up time check
+        run: |
+          bash scripts/compose-benchmark.sh

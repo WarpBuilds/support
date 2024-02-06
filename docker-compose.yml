@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: mydatabase
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: mypassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+
+  postgres:
+    image: cimg/postgres:11.14
+    container_name: postgres
+    environment:
+      POSTGRES_DB: your_database
+      POSTGRES_USER: your_user
+      POSTGRES_PASSWORD: your_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+
+  elasticsearch:
+    image: elasticsearch:7.6.1
+    container_name: elasticsearch
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+    environment:
+      - discovery.type=single-node
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    mem_limit: 2g
+
+  sftp:
+    image: atmoz/sftp:alpine
+    volumes:
+      - ./sftp-data:/home/user/share  # Map a local directory to the SFTP share
+      - ./my_ci_key.pub:/home/user/.ssh/keys/my_ci_key.pub:ro
+    ports:
+      - "2222:22"  # Expose SFTP on a custom port to avoid conflicts
+    command: user:pass:1001  # username:password:UID
+
+  gotenberg:
+    image: thecodingmachine/gotenberg:6
+    ports:
+      - "3000:3000"
+
+volumes:
+  mysql-data:
+  pg-data:
+  elasticsearch-data:
