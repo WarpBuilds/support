@@ -3,6 +3,7 @@
 echo "Generating ssh key"
 ssh-keygen -t rsa -b 4096 -C "ci@example.com" -N "" -f my_ci_key
 
+export COMPOSE_LOG_LEVEL=DEBUG
 
 # Start Docker Compose services in detached mode
 docker-compose up -d
